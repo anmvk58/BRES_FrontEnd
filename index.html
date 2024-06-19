@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrontEnd BRSE</title>
+    <!-- Latest compiled and minified CSS & JS -->
+    <link rel="stylesheet" media="screen" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        label {
+            margin-top: 15px;
+            color: steelblue;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <hr>
+        <h2>Quản lý nhân viên</h2>
+
+        <label for="input-id">ID:</label>
+        <input type="text" name="" id="input-id" class="form-control" value="" required="required" title="">
+
+        <label for="input-email">Email:</label>
+        <input type="email" name="" id="input-email" class="form-control" value="" required="required" title="">
+
+        <label for="input-username">Username:</label>
+        <input type="text" name="" id="input-username" class="form-control" value="" required="required" title="">
+
+        <label for="input-fullname">Fullname:</label>
+        <input type="text" name="" id="input-fullname" class="form-control" value="" required="required" title="">
+
+        <label for="input-department">Select a Department:</label>
+        <select name="" id="input-department" class="form-control">
+            <option value="Accounting">Accounting</option>
+            <option value="Business Analytic">Business Analytic</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Human Resouces">Human Resouces</option>
+        </select>
+
+        <label for="input-position">Select a Position:</label>
+        <select name="" id="input-position" class="form-control">
+            <option value="Developer">Developer</option>
+            <option value="Tester">Tester</option>
+            <option value="BA">BA</option>
+            <option value="BrSEer">BrSEer</option>
+            <option value="Project Manager">Project Manager</option>
+        </select>
+
+        <label for="input-date">Create Date:</label>
+        <input type="date" name="" id="input-date" class="form-control" value="" required="required" title="">
+        <br>
+        <button type="button" id="btn-save" class="btn btn-success">Save</button>
+        <button type="button" id="btn-update" class="btn btn-success">Update</button>
+        <button type="button" id="btn-reset" class="btn btn-success">Reset</button>
+
+        <hr>
+        <h2>Thông tin nhân viên trên hệ thống</h2>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Fullname</th>
+                    <th>Department</th>
+                    <th>Position</th>
+                    <th>Create Date</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="table-data">
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function Employee(id, email, username, fullname, department, position, create_date) {
+            this.id = id;
+            this.email = email;
+            this.email = email;
+            this.username = username;
+            this.fullname = fullname;
+            this.department = department;
+            this.position = position;
+            this.create_date = create_date;
+        }
+
+        var list_employee = [
+            new Employee(1, 'anmv1@vpbank.com.vn', 'anmv1', 'Mai Văn An', 'Marketing', 'Developer', '2024-06-19'),
+            new Employee(2, 'thanhtt42@vpbank.com.vn', 'thanhtt42', 'Trần Trung Thành', 'Marketing', 'Developer', '2024-06-19'),
+            new Employee(3, 'hiennh2@vpbank.com.vn', 'hiennh2', 'Nguyễn Hữu Hiển', 'Marketing', 'Developer', '2024-06-19')
+        ]
+
+        var openUpdateEmployee;
+        var openDeleteEmployee;
+
+        $(document).ready(function () {
+            // Method and code goes here
+            buildTable()
+
+            // Method for button Save
+            $("#btn-save").click(function () {
+                createEmployee()
+            })
+
+            // Method for button Reset
+            $("#btn-reset").click(function () {
+                resetForm()
+            })
+
+            // Method to update an Employee
+            $("#btn-update").click(function () {
+                var input_id = $("#input-id").val()
+                if (input_id.trim() == "") {
+                    console.log("Nothing to be update!")
+                } else {
+                    var index = list_employee.findIndex((x) => x.id == input_id)
+
+                    list_employee[index].email = $("#input-email").val()
+                    list_employee[index].username = $("#input-username").val()
+                    list_employee[index].fullname = $("#input-fullname").val()
+                    list_employee[index].department = $("#input-department").find(":selected").val()
+                    list_employee[index].position = $("#input-position").find(":selected").val()
+                    list_employee[index].create_date = $("#input-date").val()
+
+                    // Enable input id field and rebuild table
+                    $("#input-id").prop('readonly', false)
+                    resetForm()
+                    buildTable()
+                }
+            })
+
+            // Method to empty table
+            function emptyTable() {
+                $("#table-data").empty()
+            }
+
+            // Method to reset form 
+            function resetForm() {
+                $("#input-id").val('');
+                $("#input-email").val('');
+                $("#input-username").val('');
+                $("#input-fullname").val('');
+                $("#input-department").val('Accounting');
+                $("#input-position").val('Developer');
+                $("#input-date").val('');
+            }
+
+            // Method to generate data in table
+            function buildTable() {
+                emptyTable()
+                list_employee.forEach(element => {
+                    $("#table-data").append(
+                        "<tr>" +
+                        "<td>" + element.id + "</td>" +
+                        "<td>" + element.email + "</td>" +
+                        "<td>" + element.username + "</td>" +
+                        "<td>" + element.fullname + "</td>" +
+                        "<td>" + element.department + "</td>" +
+                        "<td>" + element.position + "</td>" +
+                        "<td>" + element.create_date + "</td>" +
+                        "<td>" +
+                        "<button type=\"button\" class=\"btn btn-warning\" onclick=\"openUpdateEmployee(" + element.id + ")\">Edit</button>" +
+                        "</td>" +
+                        "<td>" +
+                        "<button type=\"button\" class=\"btn btn-danger\" onclick=\"openDeleteEmployee(" + element.id + ")\">Delete</button>" +
+                        "</td>" +
+                        "</tr>"
+                    )
+                    console.log(typeof (element.create_date))
+                });
+            }
+
+            // Method to create new Employee
+            function createEmployee() {
+                var input_id = $("#input-id").val()
+                var input_email = $("#input-email").val()
+                var input_username = $("#input-username").val()
+                var input_fullname = $("#input-fullname").val()
+                var input_department = $("#input-department").find(":selected").val()
+                var input_position = $("#input-position").find(":selected").val()
+                var input_date = $("#input-date").val()
+
+                if (input_id.trim() != "" && input_email.trim() != "" && input_username.trim() != "" && input_fullname.trim() != "") {
+                    tempEmployee = new Employee(input_id, input_email, input_username, input_fullname, input_department, input_position, input_date)
+                    list_employee.push(tempEmployee)
+
+                    // rebuild lai table
+                    buildTable()
+                }
+            }
+
+            // Method to fill data into form to Edit
+            openUpdateEmployee = function openUpdateEmployee(id_find) {
+                var index = list_employee.findIndex((x) => x.id == id_find)
+
+                // fill gia tri vao form
+                $("#input-id").val(list_employee[index].id);
+                $("#input-email").val(list_employee[index].email);
+                $("#input-username").val(list_employee[index].username);
+                $("#input-fullname").val(list_employee[index].fullname);
+                $("#input-department").val(list_employee[index].department);
+                $("#input-position").val(list_employee[index].position);
+                $("#input-date").val(list_employee[index].create_date);
+
+                // disable id to prevent user edit id
+                $("#input-id").prop('readonly', true);
+            }
+
+            // Method to Delete
+            openDeleteEmployee = function openDeleteEmployee(id_find) {
+                var index = list_employee.findIndex((x) => x.id == id_find)
+
+                var result = confirm("Bạn có chắc chắn muốn xóa " + list_employee[index].username + " ra khỏi danh sách ?")
+                if (result) {
+                    list_employee.splice(index, 1)
+                    buildTable()
+                }
+            }
+
+        });
+    </script>
+</body>
+
+</html>
